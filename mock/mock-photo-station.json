@@ -1,0 +1,232 @@
+{
+  "caseId": "mock-photo-station",
+  "inputType": "old_photo",
+  "status": "ok",
+  "warnings": [
+    "开发模拟数据：不是真实搜索结果，不能用于提交。"
+  ],
+  "observations": [
+    {
+      "text": "【模拟】木质长椅",
+      "source": "image",
+      "confirmed": false
+    },
+    {
+      "text": "【模拟】墙上有站牌",
+      "source": "image",
+      "confirmed": false
+    }
+  ],
+  "searches": [
+    {
+      "purpose": "identify",
+      "query": "老火车站 候车室 老照片",
+      "ok": true,
+      "sourceIds": [
+        "src-1",
+        "src-2"
+      ]
+    },
+    {
+      "purpose": "verify",
+      "query": "老火车站 候车室 历史",
+      "ok": true,
+      "sourceIds": [
+        "src-3",
+        "src-4"
+      ]
+    },
+    {
+      "purpose": "context",
+      "query": "老火车站 候车室 当年 环境 布局",
+      "ok": true,
+      "sourceIds": [
+        "src-5"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "src-1",
+      "title": "【模拟】老火车站 候车室旧影",
+      "url": "https://mock-e.invalid/station-1",
+      "site": "模拟站点E",
+      "publishedAt": null,
+      "snippet": "【模拟】老火车站 候车室",
+      "type": "other"
+    },
+    {
+      "id": "src-2",
+      "title": "【模拟】候车室老照片",
+      "url": "https://mock-f.invalid/station-2",
+      "site": "模拟站点F",
+      "publishedAt": null,
+      "snippet": "【模拟】候车室",
+      "type": "other"
+    },
+    {
+      "id": "src-3",
+      "title": "【模拟】老火车站的历史",
+      "url": "https://mock-e.invalid/station-3",
+      "site": "模拟站点E",
+      "publishedAt": null,
+      "snippet": "【模拟】民国时期的老火车站",
+      "type": "other"
+    },
+    {
+      "id": "src-4",
+      "title": "【模拟】铁路记忆",
+      "url": "https://mock-g.invalid/station-4",
+      "site": "模拟站点G",
+      "publishedAt": null,
+      "snippet": "【模拟】民国候车室",
+      "type": "other"
+    },
+    {
+      "id": "src-5",
+      "title": "【模拟】候车室当年的布局",
+      "url": "https://mock-h.invalid/station-5",
+      "site": "模拟站点H",
+      "publishedAt": null,
+      "snippet": "【模拟】候车室有长凳和站牌",
+      "type": "other"
+    }
+  ],
+  "claims": [
+    {
+      "id": "claim-1",
+      "text": "照片里的场景与「老火车站 候车室」的公开记录相符（3 个不同站点）。",
+      "status": "supported",
+      "evidenceIds": [
+        "src-1",
+        "src-2",
+        "src-4"
+      ]
+    },
+    {
+      "id": "claim-2",
+      "text": "资料把它和「民国」联系在一起（2 个不同站点）。",
+      "status": "supported",
+      "evidenceIds": [
+        "src-3",
+        "src-4"
+      ]
+    },
+    {
+      "id": "claim-3",
+      "text": "当年的使用环境可参考《【模拟】候车室当年的布局》等 1 条资料。",
+      "status": "inferred",
+      "evidenceIds": [
+        "src-5"
+      ]
+    }
+  ],
+  "scene": {
+    "preset": "street_station",
+    "caption": "探索性历史场景，不等同于实物测绘或精确复原",
+    "objects": [
+      {
+        "id": "obj-floor",
+        "kind": "floor",
+        "label": "地面",
+        "note": "体验补全，不是证据。",
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": 2.0,
+        "rotationY": 0.0,
+        "evidenceClass": "filler",
+        "evidenceIds": [],
+        "hotspot": false
+      },
+      {
+        "id": "obj-core",
+        "kind": "display_stand",
+        "label": "这张老照片",
+        "note": "有来源支持，点开看依据。",
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": 1.0,
+        "rotationY": 0.0,
+        "evidenceClass": "supported",
+        "evidenceIds": [
+          "src-1",
+          "src-2",
+          "src-4"
+        ],
+        "hotspot": true
+      },
+      {
+        "id": "obj-signboard",
+        "kind": "signboard",
+        "label": "站牌",
+        "note": "按「当年环境」检索到的资料摆放：当年的使用环境可参考《【模拟】候车室当年的布局》等 1 条资料。",
+        "position": [
+          -1.8,
+          0.0,
+          -1.5
+        ],
+        "scale": 1.0,
+        "rotationY": 0.0,
+        "evidenceClass": "inferred",
+        "evidenceIds": [
+          "src-5"
+        ],
+        "hotspot": true
+      },
+      {
+        "id": "obj-bench",
+        "kind": "bench",
+        "label": "长凳",
+        "note": "体验补全，不是证据。",
+        "position": [
+          1.6,
+          0.0,
+          -0.8
+        ],
+        "scale": 1.0,
+        "rotationY": 0.0,
+        "evidenceClass": "filler",
+        "evidenceIds": [],
+        "hotspot": false
+      },
+      {
+        "id": "obj-suitcase",
+        "kind": "suitcase",
+        "label": "行李箱",
+        "note": "体验补全，不是证据。",
+        "position": [
+          1.0,
+          0.0,
+          0.9
+        ],
+        "scale": 1.0,
+        "rotationY": 0.0,
+        "evidenceClass": "filler",
+        "evidenceIds": [],
+        "hotspot": false
+      },
+      {
+        "id": "obj-lamp",
+        "kind": "lamp",
+        "label": "路灯",
+        "note": "体验补全，不是证据。",
+        "position": [
+          -2.4,
+          0.0,
+          0.6
+        ],
+        "scale": 1.0,
+        "rotationY": 0.0,
+        "evidenceClass": "filler",
+        "evidenceIds": [],
+        "hotspot": false
+      }
+    ]
+  }
+}

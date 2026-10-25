@@ -1,0 +1,23 @@
+[project]
+name = "shiji"
+version = "0.1.0"
+description = "拾迹：老照片与旧物溯源，元宝搜索取证，生成可反查证据的微型历史场景配置"
+readme = "README.md"
+authors = [
+    { name = "harveyzhang", email = "asiawomei@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.162.0",
+    "httpx>=0.28.1",
+    "pillow>=11.0",
+    "python-multipart>=0.0.32",
+    "uvicorn>=0.54.0",
+]
+
+[project.scripts]
+shiji = "shiji.app:main"
+
+[build-system]
+requires = ["uv_build>=0.12.5,<0.13.0"]
+build-backend = "uv_build"

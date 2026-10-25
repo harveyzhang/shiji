@@ -1,0 +1,250 @@
+{
+  "caseId": "mock-object-lamp",
+  "inputType": "object",
+  "status": "ok",
+  "warnings": [
+    "开发模拟数据：不是真实搜索结果，不能用于提交。"
+  ],
+  "observations": [
+    {
+      "text": "【模拟】玻璃灯罩",
+      "source": "image",
+      "confirmed": false
+    },
+    {
+      "text": "【模拟】金属底座和旋钮",
+      "source": "image",
+      "confirmed": false
+    }
+  ],
+  "searches": [
+    {
+      "purpose": "identify",
+      "query": "煤油灯",
+      "ok": true,
+      "sourceIds": [
+        "src-1",
+        "src-2"
+      ]
+    },
+    {
+      "purpose": "verify",
+      "query": "煤油灯 历史 年代",
+      "ok": true,
+      "sourceIds": [
+        "src-3",
+        "src-4"
+      ]
+    },
+    {
+      "purpose": "context",
+      "query": "煤油灯 当年 使用 场景",
+      "ok": true,
+      "sourceIds": [
+        "src-5"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "src-1",
+      "title": "【模拟】煤油灯的来历",
+      "url": "https://mock-a.invalid/lamp-1",
+      "site": "模拟站点A",
+      "publishedAt": null,
+      "snippet": "【模拟】煤油灯是一种照明工具",
+      "type": "other"
+    },
+    {
+      "id": "src-2",
+      "title": "【模拟】老物件里的煤油灯",
+      "url": "https://mock-b.invalid/lamp-2",
+      "site": "模拟站点B",
+      "publishedAt": null,
+      "snippet": "【模拟】煤油灯",
+      "type": "other"
+    },
+    {
+      "id": "src-3",
+      "title": "【模拟】煤油灯传入中国",
+      "url": "https://mock-a.invalid/lamp-3",
+      "site": "模拟站点A",
+      "publishedAt": null,
+      "snippet": "【模拟】煤油灯清末传入，民国时期普及",
+      "type": "other"
+    },
+    {
+      "id": "src-4",
+      "title": "【模拟】照明工具的变迁",
+      "url": "https://mock-c.invalid/lamp-4",
+      "site": "模拟站点C",
+      "publishedAt": null,
+      "snippet": "【模拟】清代晚期的煤油灯",
+      "type": "other"
+    },
+    {
+      "id": "src-5",
+      "title": "【模拟】当年家里怎么用煤油灯",
+      "url": "https://mock-d.invalid/lamp-5",
+      "site": "模拟站点D",
+      "publishedAt": null,
+      "snippet": "【模拟】煤油灯放在桌上照明",
+      "type": "other"
+    }
+  ],
+  "claims": [
+    {
+      "id": "claim-1",
+      "text": "这件旧物与「煤油灯」的公开记录相符（3 个不同站点）。",
+      "status": "supported",
+      "evidenceIds": [
+        "src-1",
+        "src-2",
+        "src-4"
+      ]
+    },
+    {
+      "id": "claim-2",
+      "text": "资料把它和「清代」联系在一起（2 个不同站点）。",
+      "status": "supported",
+      "evidenceIds": [
+        "src-3",
+        "src-4"
+      ]
+    },
+    {
+      "id": "claim-3",
+      "text": "当年的使用环境可参考《【模拟】当年家里怎么用煤油灯》等 1 条资料。",
+      "status": "inferred",
+      "evidenceIds": [
+        "src-5"
+      ]
+    }
+  ],
+  "scene": {
+    "preset": "historic_room",
+    "caption": "探索性历史场景，不等同于实物测绘或精确复原",
+    "objects": [
+      {
+        "id": "obj-floor",
+        "kind": "floor",
+        "label": "地面",
+        "note": "体验补全，不是证据。",
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": 2.0,
+        "rotationY": 0.0,
+        "evidenceClass": "filler",
+        "evidenceIds": [],
+        "hotspot": false
+      },
+      {
+        "id": "obj-core",
+        "kind": "display_stand",
+        "label": "你上传的这件旧物",
+        "note": "有来源支持，点开看依据。",
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": 1.0,
+        "rotationY": 0.0,
+        "evidenceClass": "supported",
+        "evidenceIds": [
+          "src-1",
+          "src-2",
+          "src-4"
+        ],
+        "hotspot": true
+      },
+      {
+        "id": "obj-table",
+        "kind": "table",
+        "label": "桌子",
+        "note": "按「当年环境」检索到的资料摆放：当年的使用环境可参考《【模拟】当年家里怎么用煤油灯》等 1 条资料。",
+        "position": [
+          1.4,
+          0.0,
+          0.6
+        ],
+        "scale": 1.0,
+        "rotationY": 0.0,
+        "evidenceClass": "inferred",
+        "evidenceIds": [
+          "src-5"
+        ],
+        "hotspot": true
+      },
+      {
+        "id": "obj-chair",
+        "kind": "chair",
+        "label": "椅子",
+        "note": "体验补全，不是证据。",
+        "position": [
+          2.2,
+          0.0,
+          1.3
+        ],
+        "scale": 1.0,
+        "rotationY": 0.0,
+        "evidenceClass": "filler",
+        "evidenceIds": [],
+        "hotspot": false
+      },
+      {
+        "id": "obj-shelf",
+        "kind": "shelf",
+        "label": "货架",
+        "note": "体验补全，不是证据。",
+        "position": [
+          -2.0,
+          0.0,
+          -1.8
+        ],
+        "scale": 1.0,
+        "rotationY": 0.0,
+        "evidenceClass": "filler",
+        "evidenceIds": [],
+        "hotspot": false
+      },
+      {
+        "id": "obj-wall",
+        "kind": "wall",
+        "label": "墙面",
+        "note": "体验补全，不是证据。",
+        "position": [
+          0.0,
+          0.0,
+          -2.6
+        ],
+        "scale": 1.0,
+        "rotationY": 0.0,
+        "evidenceClass": "filler",
+        "evidenceIds": [],
+        "hotspot": false
+      },
+      {
+        "id": "obj-lamp-term",
+        "kind": "lamp",
+        "label": "煤油灯（示意）",
+        "note": "形象示意，不是精确建模。按「当年环境」检索到的资料摆放：当年的使用环境可参考《【模拟】当年家里怎么用煤油灯》等 1 条资料。",
+        "position": [
+          1.4,
+          0.8,
+          0.6
+        ],
+        "scale": 1.0,
+        "rotationY": 0.0,
+        "evidenceClass": "inferred",
+        "evidenceIds": [
+          "src-5"
+        ],
+        "hotspot": true
+      }
+    ]
+  }
+}

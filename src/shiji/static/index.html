@@ -1,0 +1,846 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="上传一张老照片或一件旧物，拾迹用元宝搜索查它的来历、核对证据，再搭成一个能走进去的微型历史现场。">
+<title>拾迹 · 让每一段历史，都有迹可循</title>
+<link rel="icon" href="data:,">
+<style>
+  :root { --ink: #2a2620; --muted: #7d7466; --paper: #f6f1e7; --card: #fffdf8; --line: #e6dccb; --accent: #8a5a2b;
+          --green: #2e7d5b; --blue: #3a6ea5; --orange: #c47a1c; --gray: #8a8378; --red: #b4473a;
+          --shadow: 0 8px 24px rgba(60, 40, 10, .07); }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.65 -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; }
+  a { color: var(--blue); }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 18px; }
+  .muted { color: var(--muted); } .fine { color: var(--muted); font-size: 12px; }
+  header.top { position: sticky; top: 0; z-index: 9; background: rgba(246, 241, 231, .92); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+  header.top .wrap { display: flex; align-items: center; height: 56px; gap: 14px; }
+  .logo { font-weight: 800; font-size: 22px; letter-spacing: 3px; color: var(--ink); text-decoration: none; }
+  .logo small { font-weight: 400; font-size: 12px; letter-spacing: 0; color: var(--muted); margin-left: 8px; }
+  nav { margin-left: auto; display: flex; gap: 18px; } nav a { color: var(--ink); text-decoration: none; font-size: 14px; }
+  .hero { text-align: center; padding: 44px 0 10px; }
+  .hero h1 { font-size: 32px; line-height: 1.35; margin: 0 0 12px; letter-spacing: 1px; }
+  .hero p { color: var(--muted); max-width: 660px; margin: 0 auto; }
+  .layers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 26px 0 8px; }
+  .layer { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; box-shadow: var(--shadow); }
+  .layer b, .layer-tag { color: var(--accent); font-size: 13px; letter-spacing: 1px; font-weight: 700; }
+  .layer h3 { margin: 4px 0 6px; font-size: 17px; } .layer p { margin: 0; color: var(--muted); font-size: 13px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; margin: 14px 0; box-shadow: var(--shadow); }
+  h2 { font-size: 17px; margin: 0 0 10px; } h2 small { font-weight: 400; color: var(--muted); font-size: 12px; margin-left: 6px; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 12px; }
+  .tab { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 6px 16px; font: inherit; cursor: pointer; }
+  .tab.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .drop { display: flex; align-items: center; gap: 14px; border: 1.5px dashed #d8cbb4; border-radius: 12px; padding: 16px; cursor: pointer; color: var(--muted); background: #fffaf1; }
+  .drop input { display: none; } .drop img { width: 84px; height: 84px; object-fit: cover; border-radius: 8px; }
+  .drop b { color: var(--ink); }
+  #hint, #more { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; font: inherit; background: #fff; }
+  #hint { margin: 12px 0; } #hintNote { margin: -4px 0 12px; }
+  #refine.urge { border-color: var(--orange); background: #fffaf0; }
+  .actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .actions #more { flex: 1; min-width: 200px; }
+  .primary { background: var(--accent); color: #fff; border: 0; border-radius: 10px; padding: 11px 26px; font: inherit; font-weight: 600; cursor: pointer; }
+  .link { background: none; border: 0; color: var(--blue); font: inherit; cursor: pointer; padding: 0; text-decoration: underline; }
+  .samples { margin-top: 12px; font-size: 13px; color: var(--muted); } .samples .link { margin: 0 2px 0 6px; }
+  .archive { margin: 0; padding-left: 18px; } .archive li { margin: 4px 0; }
+  .live-head { display: flex; gap: 16px; align-items: center; } .live-head img { width: 96px; height: 96px; object-fit: cover; border-radius: 10px; }
+  .timeline { list-style: none; margin: 14px 0 0; padding: 0; }
+  .timeline li { display: flex; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); margin: 0; }
+  .timeline li:first-child { border-top: 0; }
+  .icon { width: 22px; height: 22px; border-radius: 50%; flex: none; margin-top: 2px; display: grid; place-items: center; color: #fff; font-size: 13px; }
+  .icon.done { background: var(--green); } .icon.bad { background: var(--red); }
+  .icon.run { border: 3px solid var(--line); border-top-color: var(--accent); animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .step b { display: block; } .step span { color: var(--muted); font-size: 13px; }
+  .summary { display: flex; gap: 18px; align-items: flex-start; }
+  .summary > img { width: 120px; height: 120px; object-fit: cover; border-radius: 10px; flex: none; }
+  .summary-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .status { font-weight: 700; } .status.good { color: var(--green); } .status.warn { color: var(--orange); } .status.bad { color: var(--red); }
+  .verdict { font-size: 24px; line-height: 1.4; margin: 10px 0 6px; }
+  .shared { background: #eef4fb; border-radius: 8px; padding: 6px 10px; font-size: 13px; margin: 0 0 8px; }
+  .warning { background: #fbf3e3; border-radius: 8px; padding: 6px 10px; margin: 8px 0 0; font-size: 13px; }
+  .layer-block { margin-top: 26px; } .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; } .grid2 .card { margin: 8px 0 0; }
+  .claim-head { display: flex; align-items: center; gap: 10px; } .claim-head h2 { margin: 0; }
+  .claim-text { font-size: 16px; margin: 10px 0; }
+  .badge { font-size: 12px; color: #fff; border-radius: 6px; padding: 2px 8px; white-space: nowrap; }
+  .badge.green { background: var(--green); } .badge.blue { background: var(--blue); } .badge.orange { background: var(--orange); }
+  .badge.gray, .badge.beige { background: var(--gray); }
+  .refs { font-size: 13px; color: var(--muted); } .refs a { margin-left: 4px; }
+  .query { font-size: 12px; color: var(--muted); margin-top: 8px; }
+  ul { margin: 0; padding-left: 20px; } li { margin: 3px 0; }
+  .pill { display: inline-block; font-size: 12px; border: 1px solid var(--line); border-radius: 999px; padding: 0 8px; color: var(--muted); margin-right: 4px; }
+  .ok { color: var(--green); } .bad { color: var(--red); }
+  .sources { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .src { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; background: #fffaf2; }
+  .src-head { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+  .num { font-weight: 700; color: var(--ink); }
+  .type { color: #fff; border-radius: 4px; padding: 0 6px; }
+  .type.arc { background: #6b4f2a; } .type.gov { background: #2f5d8a; } .type.med { background: #8a2f3d; } .type.enc { background: #4f6b2a; } .type.oth { background: var(--gray); }
+  .src-title { display: block; font-weight: 600; margin: 6px 0 4px; }
+  .snippet { color: var(--muted); font-size: 13px; margin: 0 0 6px; }
+  .used { font-size: 12px; } .chip { display: inline-block; background: #f1e6d3; border-radius: 999px; padding: 0 8px; margin-left: 4px; }
+  #stage { position: relative; border-radius: 12px; overflow: hidden; background: #f1eadc; min-height: 160px; }
+  #stage canvas { display: block; width: 100%; touch-action: none; }
+  #labels { position: absolute; inset: 0; pointer-events: none; }
+  .tag3d { position: absolute; transform: translate(-50%, -100%); background: rgba(42, 38, 32, .82); color: #fff; font-size: 12px; padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
+  #popup { position: absolute; width: 260px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; box-shadow: 0 10px 28px rgba(0,0,0,.14); font-size: 13px; z-index: 2; }
+  #popup p { margin: 6px 0; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; margin-top: 10px; font-size: 13px; }
+  .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+  .dot.green { background: var(--green); } .dot.blue { background: var(--blue); } .dot.beige { background: #cbbfa8; }
+  footer.foot { color: var(--muted); font-size: 12px; padding: 28px 18px 40px; }
+  #removeImage { margin-left: auto; }
+  .tl-layer { margin-top: 12px; } .tl-layer > b { color: var(--accent); font-size: 13px; letter-spacing: 1px; } .tl-layer .timeline { margin-top: 2px; }
+  .corner { position: absolute; left: 10px; bottom: 10px; background: rgba(255, 253, 248, .9); border: 1px solid var(--line); border-radius: 8px;
+            padding: 3px 8px; font-size: 12px; color: var(--muted); pointer-events: none; }
+  .src.flash { outline: 3px solid var(--orange); }
+  .src-date { margin-left: auto; }
+  .filters { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+  .filters button { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 2px 10px; font: inherit; font-size: 12px; cursor: pointer; }
+  .filters button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .checks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .check { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; background: #fffaf2; font-size: 13px; }
+  .check h3 { margin: 0; font-size: 15px; } .check dl { margin: 6px 0 0; }
+  .check dt { color: var(--muted); font-size: 12px; margin-top: 8px; } .check dd { margin: 2px 0 0; }
+  .matrix { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .matrix th, .matrix td { border-bottom: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+  .matrix th { color: var(--muted); font-weight: 600; font-size: 12px; } .matrix td.yes { color: var(--green); } .matrix td.view { color: var(--orange); }
+  .reason { display: block; color: var(--muted); font-size: 12px; }
+  .plans { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .plan { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: #fffaf2; display: flex; flex-direction: column; gap: 6px; }
+  .plan b { font-size: 15px; } .plan .price { font-size: 22px; font-weight: 800; color: var(--accent); } .plan p { margin: 0; font-size: 13px; color: var(--muted); flex: 1; }
+  .primary.small { padding: 7px 16px; font-size: 14px; align-self: flex-start; }
+  .order h3 { margin: 4px 0 6px; font-size: 16px; }
+  .order input, .order select, .order textarea { width: 100%; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; font: inherit; background: #fff; margin: 0 0 8px; }
+  #homeOrder:not(:empty) { margin-top: 14px; border-top: 1px dashed var(--line); padding-top: 12px; }
+  @media print {
+    header.top, footer.foot, button, nav, #refine, #reportOrder, .filters, #stage, .legend .fine, #failActions, p:has(> a[data-go]) { display: none !important; }
+    body { background: #fff; } .card { box-shadow: none; break-inside: avoid; } #sceneList[hidden] { display: block !important; }
+    .src-title::after { content: "（" attr(href) "）"; font-weight: 400; font-size: 11px; color: var(--muted); word-break: break-all; }
+  }
+  @media (max-width: 760px) { .layers, .grid2, .sources, .checks, .plans { grid-template-columns: 1fr; } .hero h1 { font-size: 24px; } .verdict { font-size: 20px; }
+    .summary { flex-direction: column; } }
+</style>
+<script type="importmap">{"imports": {"three": "/static/vendor/three/three.module.js"}}</script>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/" data-go="">拾迹<small>让每一段历史，都有迹可循</small></a>
+  <nav><a href="/#start" data-go="start">开始调查</a><a href="/#archive" data-go="archive">调查档案</a></nav>
+</div></header>
+
+<main class="wrap">
+  <section id="home" hidden>
+    <div class="hero">
+      <h1>拍下一件旧物，查清一段往事，<br>再带着证据走进去。</h1>
+      <p>上传一张老照片或一件旧物。拾迹先看图找线索，再用元宝搜索在全网查证，最后把查到的证据搭成一个能走进去的微型历史现场。查不到的地方，它会直说。</p>
+    </div>
+    <div class="layers">
+      <div class="layer"><b>第一层 · 来历</b><h3>它是什么</h3><p>读出图里的文字、器物和建筑，搜索它的来历。</p></div>
+      <div class="layer"><b>第二层 · 可信度</b><h3>为什么可信</h3><p>换个问法复核。两个以上不同发布方都这么说才算有证据，说法不一就标出来。</p></div>
+      <div class="layer"><b>第三层 · 场景</b><h3>当年是什么样</h3><p>查当年的使用环境，搭成可旋转的 3D 现场，每个物件都能点开看依据。</p></div>
+    </div>
+    <div class="card" id="start">
+      <div class="tabs"><button class="tab on" data-kind="old_photo">老照片</button><button class="tab" data-kind="object">旧物</button></div>
+      <label class="drop"><input type="file" id="file" accept="image/jpeg,image/png,image/webp"><img id="thumb" alt="" hidden>
+        <span id="dropText"></span><button type="button" class="link" id="removeImage" hidden>移除图片</button></label>
+      <input id="hint" maxlength="100" placeholder="你还知道什么？写名称或地点最好，比如“前门火车站”“煤油灯”（可以不填）">
+      <p id="hintNote" class="fine" hidden></p>
+      <div class="actions"><button class="primary" id="go">开始调查</button>
+        <span class="fine">图片只用于这一次调查，不保存；不识别人物身份，不碰时政内容。</span></div>
+      <div class="samples">没有图片？试试示例：
+        <button class="link" data-sample="station">正阳门东车站老照片</button>（<a href="https://commons.wikimedia.org/wiki/File:East_Zhengyangmen_Station.jpg" target="_blank" rel="noopener noreferrer">维基共享资源，公有领域</a>）
+        <button class="link" data-sample="lamp">一盏老煤油灯</button>（<a href="https://commons.wikimedia.org/wiki/File:A_kerosene_lamp_produced_by_the_factory_of_Karlskrona_Lampfabrik_in_Sweden_c._1890s.jpg" target="_blank" rel="noopener noreferrer">Svante.tiren，维基共享资源，CC0</a>）
+      </div>
+    </div>
+    <div class="card" id="services"><h2>服务与价格 <small>自助调查免费；需要人工把关或成批做，再付费</small></h2>
+      <div class="plans">
+        <div class="plan"><b>自助调查</b><div class="price">免费</div><p>上传老照片或旧物，几十秒出带出处的报告和 3D 现场，能分享、能存 PDF。</p></div>
+        <div class="plan"><b>人工复核报告</b><div class="price">¥39 / 份</div><p>在 AI 报告上逐条核对来源、补查一轮，写成能直接发给家人的寻根报告，24 小时内交付。</p><button class="primary small" data-plan="review">下单</button></div>
+        <div class="plan"><b>老物件故事墙</b><div class="price">¥999 / 10 件</div><p>给民宿、老街店：每件一份调查报告和扫码进入的 3D 历史现场，附可打印的二维码牌。</p><button class="primary small" data-plan="storywall">下单</button></div>
+        <div class="plan"><b>文旅专题</b><div class="price">¥2999 起</div><p>给街区、景区、地方志：征集来的老照片批量调查，整理成专题页，冲突和未知都标清楚。</p><button class="primary small" data-plan="culture">咨询</button></div>
+      </div>
+      <div id="homeOrder" class="order"></div>
+    </div>
+    <div class="card" id="archive"><h2>调查档案 <small>只存在这台设备上，只记结果链接，不存图片</small></h2><ul id="archiveList" class="archive"></ul></div>
+  </section>
+
+  <section id="investigating" hidden>
+    <div class="card">
+      <div class="live-head"><img id="liveThumb" alt="" hidden>
+        <div><h2>调查中 <small>已用 <span id="elapsed">0</span> 秒，通常 30–50 秒</small></h2>
+          <p class="fine">下面是正在真实发生的每一步：识图，几轮目的不同的元宝搜索（后一轮按前一轮查到的来定），交叉比对，搭建现场。</p></div></div>
+      <div id="timeline">
+        <div class="tl-layer"><b>第一层 · 来历</b><ol class="timeline" data-layer="1"></ol></div>
+        <div class="tl-layer"><b>第二层 · 可信度</b><ol class="timeline" data-layer="2"></ol></div>
+        <div class="tl-layer"><b>第三层 · 场景</b><ol class="timeline" data-layer="3"></ol></div>
+        <ol class="timeline" id="timelineEnd"></ol>
+      </div>
+      <p id="failActions" hidden><button class="primary" id="retry">重新调查</button>　<a href="/#start" data-go="start">← 返回修改</a></p>
+    </div>
+  </section>
+
+  <section id="report" hidden>
+    <div class="card summary" id="summary"></div>
+    <div class="layer-block"><div class="layer-tag">第一层 · 来历</div>
+      <div class="grid2"><div class="card"><h2>看到的线索</h2><ul id="observations"></ul></div><div class="card" id="claimIdentity"></div></div></div>
+    <div class="layer-block"><div class="layer-tag">第二层 · 可信度</div>
+      <div class="card"><h2>交叉核验<small>每条判断都摆出支持的来源、不同的说法、当前结论和下一步</small></h2><div class="checks" id="checks"></div></div>
+      <div class="grid2"><div class="card"><h2>发布方对照表<small>同一发布方的多篇只算一家</small></h2><div id="matrix"></div></div>
+        <div class="card"><h2>争议与未知</h2><ul id="unknowns"></ul>
+          <p class="fine">两个以上不同发布方都这么说，才标“有证据支持”；只有一个发布方的标“合理推断”；同一网站的转载、维基镜像只算一个发布方。</p></div></div></div>
+    <div class="layer-block"><div class="layer-tag">第三层 · 场景</div>
+      <div class="card" id="claimContext"></div>
+      <div class="card"><h2>历史现场</h2>
+        <div id="stage"><div id="labels"></div><div class="corner" id="caption"></div><div id="popup" hidden></div></div>
+        <div id="sceneList" hidden></div>
+        <div class="legend"><span><i class="dot green"></i>有证据支持</span><span><i class="dot blue"></i>合理推断</span><span><i class="dot beige"></i>体验补全</span>
+          <span class="fine">拖动旋转 · 滚轮或双指缩放 · 点带圈的物件看依据</span></div></div></div>
+    <div class="card"><h2>查了什么<small>后一轮搜索按前一轮查到的来定</small></h2><ul id="searches"></ul></div>
+    <div class="card"><h2>来源<small>点标题打开原网页；档案方志、政府算一手资料，媒体、百科算辅助资料</small></h2>
+      <div class="filters" id="sourceFilter"></div><div id="sources" class="sources"></div></div>
+    <div class="card" id="refine"><h2 id="refineTitle">补充线索，再查一次</h2>
+      <p class="fine">写一个更准的名称或地点，比如“北京前门火车站”“民国煤油灯”。会用同一张图，按你的线索重新搜索。</p>
+      <div class="actions"><input id="more" maxlength="60" placeholder="更准的名称或地点"><button class="primary" id="again">再查一次</button></div></div>
+    <div class="card order" id="reportOrder"></div>
+    <p><a href="/#start" data-go="start">← 再查一件</a></p>
+  </section>
+</main>
+<footer class="wrap foot">拾迹 · 一人公司：AI 查证，人工把关。搜索：腾讯元宝搜索 · 识图与归纳：MiniMax（Toklens 备用）· 3D：three.js（MIT）· 示例图片：维基共享资源。历史现场是基于证据的探索性重建，不等同于学术复原、文物鉴定或实物测绘。</footer>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from '/static/vendor/three/OrbitControls.js';
+
+const $ = (id) => document.getElementById(id);
+const STATUS = { ok: ['调查完成', 'good'], text_only: ['调查完成（按文字线索）', 'good'], insufficient: ['证据不足，暂不下结论', 'warn'],
+  search_failed: ['搜索没有成功，不下结论', 'bad'], refused: ['这类问题不查', 'bad'] };
+const CLAIM = { supported: ['有证据支持', 'green'], conflicting: ['存在冲突', 'orange'], inferred: ['合理推断', 'blue'], unknown: ['证据不足', 'gray'] };
+const STANDING = { supported: (n) => `有证据支持：${n} 个不同发布方都这么说`, conflicting: () => '存在冲突：几种说法都有来源，先都保留',
+  inferred: () => '合理推断：只有 1 个发布方提到，还要再找独立来源', unknown: () => '证据不足：这次的来源里没有直接依据' };
+const CLAIM_TITLES = ['它是什么', '年代', '当年环境'];
+const EVIDENCE = { supported: ['有证据支持', 'green', 0x2e7d5b], inferred: ['合理推断', 'blue', 0x3a6ea5], filler: ['体验补全', 'beige', 0xcbbfa8] };
+const PURPOSE = { identify: '来历', verify: '复核', crosscheck: '交叉核对', context: '当年环境' };
+const LAYER = { begin: 1, observe: 1, identify: 1, verify: 2, crosscheck: 2, write: 2, context: 3, scene: 3 };
+const TYPE = { government: ['政府', 'gov'], archive: ['档案方志', 'arc'], media: ['媒体', 'med'], encyclopedia: ['百科', 'enc'], other: ['其他', 'oth'] };
+const PRESET = { historic_room: '老式室内', street_station: '街道车站', neutral_desk: '中性调查台' };
+// 最后一项是示例图来源页上的图注，选示例时填进线索并明说；删掉就只靠图片去查。
+const SAMPLES = { station: ['/static/samples/zhengyangmen-station.jpg', 'old_photo', '正阳门东车站.jpg', '正阳门东车站'],
+  lamp: ['/static/samples/kerosene-lamp.jpg', 'object', '老煤油灯.jpg', ''] };
+const ARCHIVE_KEY = 'shiji-archive';
+const safeUrl = (url) => (/^https?:\/\//i.test(url) ? url : '#');
+const evidence = (item) => EVIDENCE[item.evidenceClass] || EVIDENCE.filler;
+
+function el(tag, attrs = {}, ...children) {
+  const node = document.createElement(tag);
+  for (const [key, value] of Object.entries(attrs)) {
+    if (key === 'class') node.className = value; else if (key === 'text') node.textContent = value; else node.setAttribute(key, value);
+  }
+  for (const child of children) if (child !== null && child !== undefined && child !== false) node.append(child);
+  return node;
+}
+// 结论、核验卡和 3D 热点里的 [n] 都跳到报告里同一张来源卡；来源卡的标题才打开原网页。
+function jumpTo(id) {
+  const card = document.getElementById(`card-${id}`);
+  if (!card) return;
+  if (card.hidden) filterSources('all');
+  card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  card.classList.add('flash'); setTimeout(() => card.classList.remove('flash'), 1600);
+}
+function sourceLink(s) {
+  const link = el('a', { href: `#card-${s.id}`, title: `${s.title}（${s.site}）`, text: `[${s.n}]` });
+  link.addEventListener('click', (event) => { event.preventDefault(); jumpTo(s.id); });
+  return link;
+}
+
+let kind = 'old_photo', file = null, imageUrl = null, sources = {}, running = null, showImage = false, blankText = '', sampleHint = '', lastRun = '';
+
+// ---------- 首页：两个入口、示例、档案 ----------
+function setKind(value) {
+  kind = value;
+  document.querySelectorAll('.tab').forEach((b) => b.classList.toggle('on', b.dataset.kind === value));
+}
+function setFile(value) {
+  file = value;
+  if (imageUrl) URL.revokeObjectURL(imageUrl);
+  imageUrl = value ? URL.createObjectURL(value) : null;
+  $('thumb').hidden = !value; $('removeImage').hidden = !value;
+  if (value) $('thumb').src = imageUrl;
+  $('dropText').replaceChildren(...(value ? [el('b', { text: value.name }), el('br'), '已选好，可以写一句线索，再点“开始调查”']
+    : [el('b', { text: '点这里选一张图片' }), el('br'), 'JPG、PNG、WebP，8 MB 以内']));
+}
+setFile(null);
+$('removeImage').addEventListener('click', (event) => {
+  event.preventDefault(); event.stopPropagation();
+  if (sampleHint && $('hint').value === sampleHint) $('hint').value = '';
+  sampleHint = ''; $('hintNote').hidden = true; $('file').value = '';
+  setFile(null);
+});
+document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => setKind(b.dataset.kind)));
+// 扫描的老照片常有好几 MB，经 Cloudflare 上传会慢到断开；先在浏览器里缩到长边 1600 像素的 JPEG（识图只用 1024）。
+async function shrink(original) {
+  if (!original || original.size <= 600 * 1024) return original;
+  try {
+    const bitmap = await createImageBitmap(original);
+    const scale = Math.min(1, 1600 / Math.max(bitmap.width, bitmap.height));
+    const canvas = Object.assign(document.createElement('canvas'), { width: Math.round(bitmap.width * scale), height: Math.round(bitmap.height * scale) });
+    canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.85));
+    return blob && blob.size < original.size ? new File([blob], original.name.replace(/\.\w+$/, '') + '.jpg', { type: 'image/jpeg' }) : original;
+  } catch {
+    return original;
+  }
+}
+$('file').addEventListener('change', async (e) => {
+  if (sampleHint && $('hint').value === sampleHint) $('hint').value = '';
+  sampleHint = ''; $('hintNote').hidden = true;
+  setFile(await shrink(e.target.files[0] || null));
+});
+document.querySelectorAll('[data-sample]').forEach((b) => b.addEventListener('click', async () => {
+  const [url, sampleKind, name, caption] = SAMPLES[b.dataset.sample];
+  const blob = await (await fetch(url)).blob();
+  setKind(sampleKind);
+  setFile(new File([blob], name, { type: blob.type || 'image/jpeg' }));
+  $('hint').value = sampleHint = caption;
+  $('hintNote').textContent = caption ? `示例照片的图注写着“${caption}”，已帮你填进线索；删掉它，就只靠图片去查。` : '这张示例不带线索，只靠图片去查。';
+  $('hintNote').hidden = false;
+  $('go').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}));
+$('go').addEventListener('click', () => {
+  const hint = $('hint').value.trim();
+  if (!file && !hint) { alert('请选一张图片，或者写一句线索。'); return; }
+  investigate(hint);
+});
+$('retry').addEventListener('click', () => investigate(lastRun));
+$('again').addEventListener('click', () => {
+  const more = $('more').value.trim();
+  if (!more) { alert('先写一条补充线索。'); return; }
+  $('more').value = '';
+  investigate(more);  // 新线索更准，替换上一次的线索，图片沿用
+});
+function archive() { try { return JSON.parse(localStorage.getItem(ARCHIVE_KEY) || '[]'); } catch { return []; } }
+function remember(data) {
+  if (!data.shareId) return;
+  const list = archive().filter((x) => x.shareId !== data.shareId);
+  list.unshift({ shareId: data.shareId, title: (data.claims[0]?.text || '一次调查').slice(0, 40), at: new Date().toLocaleString('zh-CN', { hour12: false }) });
+  try { localStorage.setItem(ARCHIVE_KEY, JSON.stringify(list.slice(0, 12))); } catch { /* 隐私模式下存不了，不影响本次结果 */ }
+  history.replaceState(null, '', `/c/${data.shareId}`);
+}
+function renderArchive() {
+  const list = archive();
+  $('archiveList').replaceChildren(...(list.length ? list.map((x) => el('li', {}, el('a', { href: `/c/${encodeURIComponent(x.shareId)}`, text: x.title }), el('span', { class: 'muted', text: ` · ${x.at}` })))
+    : [el('li', { class: 'muted', text: '还没有调查记录。查完一次，会自动记在这里。' })]));
+}
+function show(screen) {
+  for (const id of ['home', 'investigating', 'report']) $(id).hidden = id !== screen;
+  if (screen === 'home') renderArchive();
+  window.scrollTo({ top: 0 });
+}
+function goHome(anchor) {
+  running?.abort();
+  if (location.pathname !== '/') history.pushState(null, '', '/');
+  show('home');
+  if (anchor) $(anchor).scrollIntoView({ behavior: 'smooth' });
+}
+document.querySelectorAll('[data-go]').forEach((a) => a.addEventListener('click', (event) => { event.preventDefault(); goHome(a.dataset.go); }));
+
+// ---------- 下单：人工复核、故事墙、文旅专题（先确认需求再付款） ----------
+const PLANS = { review: '人工复核报告（¥39 / 份）', storywall: '老物件故事墙（¥999 / 10 件）', culture: '文旅专题（¥2999 起）' };
+function orderForm(container, plan, shareId) {
+  const select = el('select', {}, ...Object.entries(PLANS).map(([key, label]) => {
+    const option = el('option', { value: key, text: label });
+    option.selected = key === plan;
+    return option;
+  }));
+  const name = el('input', { placeholder: '称呼（可不填）', maxlength: '20' });
+  const contact = el('input', { placeholder: '微信 / 手机 / 邮箱（必填）', maxlength: '60' });
+  const note = el('textarea', { placeholder: '想查清什么？比如拍摄地点、年代、物件名称、有几件', maxlength: '300', rows: '3' });
+  const send = el('button', { class: 'primary', text: '提交订单' });
+  const status = el('p', { class: 'fine' });
+  send.addEventListener('click', async () => {
+    if (!contact.value.trim()) { status.textContent = '请留下联系方式，方便确认需求和付款。'; return; }
+    const form = new FormData();
+    form.append('plan', select.value); form.append('name', name.value); form.append('contact', contact.value); form.append('note', note.value);
+    if (shareId) form.append('shareId', shareId);
+    send.disabled = true; status.textContent = '提交中……';
+    try {
+      const response = await fetch('/api/orders', { method: 'POST', body: form });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(typeof body.detail === 'string' ? body.detail : `提交失败（HTTP ${response.status}）`);
+      status.textContent = `已收到订单（编号 ${body.orderId}）。会通过你留的联系方式确认需求，确认后再付款。`;
+      contact.value = ''; note.value = '';
+    } catch (error) {
+      status.textContent = error instanceof TypeError ? '网络断了，请稍后再试。' : error.message;
+    } finally {
+      send.disabled = false;
+    }
+  });
+  container.replaceChildren(el('h3', { text: shareId ? '需要人工把关，或者做成故事墙？' : `下单：${PLANS[plan]}` }), select, name, contact, note,
+    el('div', { class: 'actions' }, send, el('span', { class: 'fine', text: '先确认需求再付款；联系方式只用于这一单的沟通。' })), status);
+}
+document.querySelectorAll('[data-plan]').forEach((b) => b.addEventListener('click', () => {
+  orderForm($('homeOrder'), b.dataset.plan, '');
+  $('homeOrder').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}));
+
+// ---------- 调查中：读 SSE，实时画时间线 ----------
+const steps = new Map();
+function step(key, title, detail, state) {
+  let item = steps.get(key);
+  if (!item) {
+    item = el('li'); steps.set(key, item);
+    (LAYER[key] ? document.querySelector(`#timeline ol[data-layer="${LAYER[key]}"]`) : $('timelineEnd')).append(item);
+  }
+  item.replaceChildren(el('span', { class: `icon ${state}`, text: state === 'done' ? '✓' : state === 'bad' ? '!' : '' }),
+    el('div', { class: 'step' }, el('b', { text: title }), detail ? el('span', { text: detail }) : null));
+}
+const reasons = {};
+function onStage(name, data) {
+  const title = `${PURPOSE[data.purpose] || data.purpose}搜索`;
+  if (name === 'observe') step('observe', '观察', '正在读图里的文字、器物和建筑……', 'run');
+  if (name === 'observed') step('observe', '观察', data.failed ? '识图没有成功，改用你给的文字线索'
+    : `${data.observations.join('；') || '图里没有读出明确线索'}${data.term ? `　→ 搜索词「${data.term}」` : ''}`, data.failed ? 'bad' : 'done');
+  if (name === 'search') { reasons[data.purpose] = data.reason || ''; step(data.purpose, title, `${data.reason ? `${data.reason}：` : ''}元宝搜索「${data.query}」……`, 'run'); }
+  if (name === 'searched') step(data.purpose, title, `${reasons[data.purpose] ? `${reasons[data.purpose]}：` : ''}「${data.query}」${data.ok ? ` · 找到 ${data.count} 条可用来源` : ' · 这次搜索失败'}`, data.ok ? 'done' : 'bad');
+  if (name === 'write') step('write', '交叉比对', '把几轮搜索的来源放在一起比对，写成三条判断；强弱按不同发布方的数量定……', 'run');
+  if (name === 'scene') {
+    if (steps.has('write')) step('write', '交叉比对', '三条判断都标了依据，不同的说法也列出来了', 'done');
+    step('scene', '搭建现场', `场景：${PRESET[data.preset] || data.preset}`, 'done');
+  }
+}
+async function investigate(hint) {
+  running?.abort();
+  const controller = running = new AbortController();
+  const form = new FormData();
+  form.append('inputType', kind);
+  form.append('userHint', hint);
+  if (file) form.append('image', file);
+  lastRun = hint;
+  steps.clear(); document.querySelectorAll('#timeline ol').forEach((list) => list.replaceChildren()); $('failActions').hidden = true;
+  $('liveThumb').hidden = !imageUrl; if (imageUrl) $('liveThumb').src = imageUrl;
+  show('investigating');
+  step('begin', '开始调查', hint ? `你给的线索：${hint}` : '只用图片，不带文字线索', 'done');
+  const began = Date.now();
+  $('elapsed').textContent = '0';
+  const timer = setInterval(() => { $('elapsed').textContent = Math.round((Date.now() - began) / 1000); }, 500);
+  try {
+    const response = await fetch('/api/investigate/stream', { method: 'POST', body: form, signal: controller.signal });
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({}));
+      throw new Error(typeof body.detail === 'string' ? body.detail : `请求失败（HTTP ${response.status}）`);
+    }
+    const reader = response.body.getReader(), decoder = new TextDecoder();
+    let buffer = '', result = null;
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      let cut;
+      while ((cut = buffer.indexOf('\n\n')) >= 0) {
+        const block = buffer.slice(0, cut); buffer = buffer.slice(cut + 2);
+        const name = (block.match(/^event: (.*)$/m) || [])[1], raw = (block.match(/^data: (.*)$/m) || [])[1];
+        if (!name || raw === undefined) continue;
+        const data = JSON.parse(raw);
+        if (name === 'result') result = data; else if (name === 'error') throw new Error(data.detail); else onStage(name, data);
+      }
+    }
+    if (!result) throw new Error('调查中断了，请再试一次。');
+    remember(result);
+    render(result, true);
+  } catch (error) {
+    if (controller.signal.aborted) return;
+    document.querySelectorAll('#timeline .icon.run').forEach((icon) => { icon.className = 'icon bad'; icon.textContent = '!'; });
+    // fetch 自己抛的 TypeError 是网络断开（Chrome 写 Failed to fetch），换成人话。
+    step('error', '没有完成', error instanceof TypeError ? '网络连接中断了，可能是图片太大或网络不稳。点「重新调查」再试一次。' : error.message, 'bad');
+    $('failActions').hidden = false;
+  } finally {
+    clearInterval(timer);
+    if (running === controller) running = null;
+  }
+}
+
+// ---------- 报告：按来历、可信度、场景三层组织 ----------
+function claimCard(id, title, claim, search) {
+  const [badge, color] = CLAIM[claim?.status] || CLAIM.unknown;
+  const refs = (claim?.evidenceIds || []).map((i) => sources[i]).filter(Boolean);
+  $(id).replaceChildren(el('div', { class: 'claim-head' }, el('h2', { text: title }), el('span', { class: `badge ${color}`, text: badge })),
+    el('p', { class: 'claim-text', text: claim ? claim.text : '这次没有结果。' }),
+    refs.length ? el('div', { class: 'refs' }, '依据：', ...refs.map(sourceLink)) : el('div', { class: 'refs', text: '没有可引用的来源。' }),
+    search ? el('div', { class: 'query', text: `搜索词：「${search.query}」${search.ok ? '' : '（这次搜索失败）'}` }) : null);
+}
+function publishersOf(ids) {
+  const groups = new Map();
+  for (const id of ids || []) {
+    const s = sources[id];
+    if (!s) continue;
+    const key = s.publisher || s.site;
+    if (!groups.has(key)) groups.set(key, { name: s.site, refs: [] });
+    groups.get(key).refs.push(s);
+  }
+  return [...groups.values()];
+}
+function publisherLine(ids) {
+  const groups = publishersOf(ids);
+  if (!groups.length) return null;
+  const line = el('span');
+  groups.forEach((g, i) => line.append(i ? '、' : '', `${g.name} `, ...g.refs.map(sourceLink)));
+  return line;
+}
+function checkCard(title, claim) {
+  const [badge, color] = CLAIM[claim.status] || CLAIM.unknown;
+  const views = claim.views || [], count = publishersOf(claim.evidenceIds).length;
+  const others = views.length ? el('div', {}, ...views.map((v) => el('div', {}, `「${v.text}」：`, publisherLine(v.evidenceIds) || '没有来源')))
+    : el('span', { class: 'muted', text: claim.status === 'unknown' ? '还没有可比对的说法' : '这次的来源里没有发现相反的说法' });
+  return el('div', { class: 'check' }, el('div', { class: 'claim-head' }, el('h3', { text: title }), el('span', { class: `badge ${color}`, text: badge })),
+    el('dl', {}, el('dt', { text: '待核验判断' }), el('dd', { text: claim.text }),
+      el('dt', { text: `支持证据（${count} 个发布方）` }), el('dd', {}, publisherLine(claim.evidenceIds) || el('span', { class: 'muted', text: '没有' })),
+      el('dt', { text: '不同的说法' }), el('dd', {}, others),
+      el('dt', { text: '当前结论' }), el('dd', { text: (STANDING[claim.status] || STANDING.unknown)(count) }),
+      el('dt', { text: '下一步验证' }), el('dd', { text: claim.nextStep || '—' })));
+}
+function renderMatrix(claims, list) {
+  const keyOf = (s) => s.publisher || s.site, cited = new Map();
+  for (const c of claims) for (const id of [...c.evidenceIds, ...(c.views || []).flatMap((v) => v.evidenceIds)]) {
+    const s = sources[id];
+    if (s && !cited.has(keyOf(s))) cited.set(keyOf(s), s);
+  }
+  if (!cited.size) { $('matrix').replaceChildren(el('p', { class: 'muted', text: '这次没有结论引用来源，没有可比对的发布方。' })); return; }
+  const head = el('tr', {}, el('th', { text: '发布方' }), ...claims.map((c, i) => el('th', { text: `${CLAIM_TITLES[i]}（${publishersOf(c.evidenceIds).length} 家）` })));
+  const rows = [...cited.entries()].map(([key, first]) => el('tr', {},
+    el('td', {}, `${first.site} `, el('span', { class: 'fine', text: (TYPE[first.type] || TYPE.other)[0] })),
+    ...claims.map((c) => {
+      const mine = (ids) => ids.some((id) => sources[id] && keyOf(sources[id]) === key);
+      const views = (c.views || []).filter((v) => mine(v.evidenceIds));
+      if (views.length) return el('td', { class: 'view', text: views.map((v) => v.text).join(' / ') });
+      const refs = c.evidenceIds.map((id) => sources[id]).filter((s) => s && keyOf(s) === key);
+      return refs.length ? el('td', { class: 'yes' }, '✓ ', ...refs.map(sourceLink)) : el('td', { class: 'muted', text: '—' });
+    })));
+  const counts = {};
+  list.forEach((s) => { counts[keyOf(s)] = counts[keyOf(s)] || { name: s.site, n: 0 }; counts[keyOf(s)].n += 1; });
+  const merged = Object.values(counts).filter((c) => c.n > 1).map((c) => `${c.name} ${c.n} 篇`);
+  $('matrix').replaceChildren(el('table', { class: 'matrix' }, el('thead', {}, head), el('tbody', {}, ...rows)),
+    merged.length ? el('p', { class: 'fine', text: `合并计算：${merged.join('、')}，各算一家。` }) : null);
+}
+function filterSources(type) {
+  $('sourceFilter').querySelectorAll('button').forEach((b) => b.classList.toggle('on', b.dataset.type === type));
+  document.querySelectorAll('#sources .src').forEach((card) => { card.hidden = type !== 'all' && card.dataset.type !== type; });
+}
+function renderFilter(list) {
+  const counts = {};
+  list.forEach((s) => { counts[s.type || 'other'] = (counts[s.type || 'other'] || 0) + 1; });
+  const chips = [['all', `全部 ${list.length}`], ...Object.keys(TYPE).filter((t) => counts[t]).map((t) => [t, `${TYPE[t][0]} ${counts[t]}`])];
+  $('sourceFilter').replaceChildren(...chips.map(([type, label]) => {
+    const chip = el('button', { text: label, 'data-type': type });
+    chip.addEventListener('click', () => filterSources(type));
+    return chip;
+  }));
+  filterSources('all');
+}
+function sceneItems(spec) {
+  return el('ul', {}, ...spec.objects.filter((o) => !['floor', 'wall'].includes(o.kind))
+    .map((o) => el('li', { text: `${o.label || o.kind}：${evidence(o)[0]}。${o.note}` })));
+}
+function render(data, fresh) {
+  showImage = fresh && Boolean(imageUrl);
+  blankText = fresh ? '这次没有上传图片' : '原图不保存';
+  sources = Object.fromEntries(data.sources.map((s, i) => [s.id, { ...s, n: i + 1 }]));
+  const [identity, era, context] = data.claims;
+  const bySearch = Object.fromEntries(data.searches.map((s) => [s.purpose, s]));
+  const [label, tone] = STATUS[data.status] || [data.status, 'warn'];
+  const share = data.shareId ? el('button', { class: 'link', text: '复制分享链接' }) : null;
+  if (share) share.addEventListener('click', async () => {
+    const url = `${location.origin}/c/${data.shareId}`;
+    try { await navigator.clipboard.writeText(url); share.textContent = '已复制，发给朋友就能看到这份调查'; } catch { prompt('复制这个链接：', url); }
+  });
+  const print = el('button', { class: 'link', text: '打印 / 存成 PDF' });
+  print.addEventListener('click', () => window.print());
+  const retry = fresh && ['insufficient', 'search_failed'].includes(data.status) ? el('button', { class: 'link', text: '补充线索，再查一次 ↓' }) : null;
+  if (retry) retry.addEventListener('click', () => { $('refine').scrollIntoView({ behavior: 'smooth' }); $('more').focus({ preventScroll: true }); });
+  $('summary').replaceChildren(...(showImage ? [el('img', { src: imageUrl, alt: '这次调查的图片' })] : []), el('div', {},
+    ...(fresh ? [] : [el('p', { class: 'shared', text: '这是一份分享的调查记录。原图不保存，现场展台上只显示占位。' })]),
+    el('div', { class: 'summary-head' }, el('span', { class: `status ${tone}`, text: label }), share, print, retry),
+    el('div', { class: 'verdict', text: identity ? identity.text : '这次没有形成判断' }),
+    el('p', { class: 'muted', text: [era?.text, context?.text].filter(Boolean).join('　') }),
+    ...data.warnings.map((w) => el('p', { class: 'warning', text: w }))));
+  $('observations').replaceChildren(...(data.observations.length ? data.observations.map((o) => el('li', {},
+    el('span', { class: 'pill', text: o.source === 'image' ? '来自图片' : '你补充的' }), o.text)) : [el('li', { class: 'muted', text: '没有线索。' })]));
+  claimCard('claimIdentity', '它是什么', identity, bySearch.identify);
+  $('checks').replaceChildren(...(data.claims.length ? data.claims.map((c, i) => checkCard(CLAIM_TITLES[i], c))
+    : [el('p', { class: 'muted', text: '这次没有形成判断，没有可核验的内容。' })]));
+  renderMatrix(data.claims, data.sources);
+  claimCard('claimContext', '当年环境', context, bySearch.context);
+  const open = data.claims.map((c, i) => [CLAIM_TITLES[i], c]).filter(([, c]) => c.status !== 'supported');
+  $('unknowns').replaceChildren(...(!data.claims.length ? [el('li', { text: '这次没有形成结论。' })]
+    : open.length ? open.map(([t, c]) => el('li', {}, el('b', { text: `${t}：${(CLAIM[c.status] || CLAIM.unknown)[0]}。` }), c.text))
+      : [el('li', { text: '三条结论都有两个以上不同发布方支持，没有发现明显争议。' })]));
+  $('searches').replaceChildren(...(data.searches.length ? data.searches.map((s, i) => el('li', {},
+    el('span', { class: 'pill', text: `第 ${i + 1} 轮 · ${PURPOSE[s.purpose] || s.purpose}` }), `「${s.query}」 `,
+    el('span', { class: s.ok ? 'ok' : 'bad', text: s.ok ? `✓ ${s.sourceIds.length} 条来源` : '✗ 搜索失败' }),
+    s.reason ? el('span', { class: 'reason', text: `为什么这么搜：${s.reason}` }) : null)) : [el('li', { text: '这次没有发出搜索。' })]));
+  const usedBy = {};
+  data.claims.forEach((c, i) => c.evidenceIds.forEach((id) => (usedBy[id] ||= new Set()).add(CLAIM_TITLES[i])));
+  data.scene.objects.forEach((o) => o.evidenceIds.forEach((id) => (usedBy[id] ||= new Set()).add('历史现场')));
+  $('sources').replaceChildren(...data.sources.map((s) => {
+    const [typeLabel, typeClass] = TYPE[s.type] || TYPE.other;
+    const date = String(s.publishedAt || '').slice(0, 10).replaceAll('/', '-');
+    return el('div', { class: 'src', id: `card-${s.id}`, 'data-type': s.type || 'other' }, el('div', { class: 'src-head' }, el('span', { class: 'num', text: `[${sources[s.id].n}]` }),
+      el('span', { class: `type ${typeClass}`, text: typeLabel }), el('span', { text: s.site }), date ? el('span', { class: 'src-date', text: date }) : null),
+      el('a', { class: 'src-title', href: safeUrl(s.url), target: '_blank', rel: 'noopener noreferrer', text: s.title || s.url }),
+      el('p', { class: 'snippet', text: s.snippet }),
+      usedBy[s.id] ? el('div', { class: 'used' }, '支持：', ...[...usedBy[s.id]].map((u) => el('span', { class: 'chip', text: u })))
+        : el('div', { class: 'used muted', text: '没有被结论引用' }));
+  }));
+  if (!data.sources.length) $('sources').append(el('p', { class: 'muted', text: '这次没有可用来源。' }));
+  renderFilter(data.sources);
+  $('caption').textContent = data.scene.caption;
+  $('sceneList').replaceChildren(el('p', { text: '现场清单（打印时代替 3D）：' }), sceneItems(data.scene));
+  const stuck = ['insufficient', 'search_failed'].includes(data.status);
+  $('refine').hidden = !fresh;
+  orderForm($('reportOrder'), 'review', data.shareId || '');
+  $('refine').classList.toggle('urge', stuck);
+  $('refineTitle').textContent = stuck ? '这次没查清。补一个名称或地点，再查一次' : '补充线索，再查一次';
+  show('report');
+  try { buildScene(data.scene); } catch (error) { fallbackList(data.scene, error); }
+}
+
+// ---------- 历史现场：几何体 + 自然材质 + 证据色盘 + 标签 ----------
+let renderer, camera, controls, scene, pickables = [], markers = [], tags = [], pressed = null, intro = null;
+const mat = (color, roughness = 0.8, metalness = 0) => new THREE.MeshStandardMaterial({ color, roughness, metalness });
+function box(w, h, d, material, y = h / 2, x = 0, z = 0) {
+  const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), typeof material === 'number' ? mat(material) : material);
+  mesh.position.set(x, y, z); mesh.castShadow = true; mesh.receiveShadow = true;
+  return mesh;
+}
+function canvasTexture(draw, w = 512, h = 512) {
+  const canvas = Object.assign(document.createElement('canvas'), { width: w, height: h });
+  draw(canvas.getContext('2d'), w, h);
+  const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
+function floorTexture(street) {
+  return canvasTexture((g, w, h) => {
+    g.fillStyle = street ? '#b9ad99' : '#a97a52'; g.fillRect(0, 0, w, h);
+    g.strokeStyle = street ? 'rgba(80,70,55,.35)' : 'rgba(70,40,20,.35)'; g.lineWidth = 3;
+    for (let i = 0; i <= 8; i++) { g.beginPath(); g.moveTo(0, i * h / 8); g.lineTo(w, i * h / 8); g.stroke(); }
+    if (street) for (let i = 0; i <= 8; i++) { g.beginPath(); g.moveTo(i * w / 8 + (i % 2) * 20, 0); g.lineTo(i * w / 8 + (i % 2) * 20, h); g.stroke(); }
+  });
+}
+function signTexture(text) {
+  return canvasTexture((g, w, h) => {
+    g.fillStyle = '#23463a'; g.fillRect(0, 0, w, h);
+    g.strokeStyle = '#d9c38f'; g.lineWidth = 10; g.strokeRect(12, 12, w - 24, h - 24);
+    g.fillStyle = '#f4e6c4'; g.font = 'bold 64px "PingFang SC", sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText(text.slice(0, 7), w / 2, h / 2);
+  }, 512, 192);
+}
+function photoHolder(item, size) {
+  const holder = new THREE.Group();
+  const placeholder = canvasTexture((g, w, h) => {
+    g.fillStyle = '#efe6d4'; g.fillRect(0, 0, w, h); g.fillStyle = '#7d7466'; g.font = '44px "PingFang SC", sans-serif';
+    g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(blankText, w / 2, h / 2);
+  });
+  const material = new THREE.MeshBasicMaterial({ map: placeholder, toneMapped: false });
+  const photo = new THREE.Mesh(new THREE.PlaneGeometry(size, size), material);
+  photo.position.z = 0.03;
+  holder.add(box(size + 0.12, size + 0.12, 0.05, evidence(item)[2], 0), photo);
+  if (showImage) new THREE.TextureLoader().load(imageUrl, (texture) => {
+    texture.colorSpace = THREE.SRGBColorSpace; material.map = texture; material.needsUpdate = true;
+    const ratio = texture.image.height / texture.image.width;
+    holder.scale.set(ratio > 1 ? 1 / ratio : 1, ratio > 1 ? 1 : ratio, 1);
+  });
+  return holder;
+}
+function makeKind(item, preset) {
+  const g = new THREE.Group(), raised = item.position[1] > 0.05;
+  switch (item.kind) {
+    case 'floor': {
+      const floor = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 3.6), new THREE.MeshStandardMaterial({ map: floorTexture(preset === 'street_station'), roughness: 0.95 }));
+      floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; g.add(floor); break;
+    }
+    case 'wall': g.add(box(7, 2.8, 0.14, 0xeee3cf), box(7, 0.2, 0.18, 0x7a5638, 0.1)); break;
+    case 'door_window':
+      g.add(box(1.1, 2.1, 0.12, 0x6b4a30), box(0.8, 1.2, 0.13, new THREE.MeshStandardMaterial({ color: 0xbfd6e0, roughness: 0.1, metalness: 0.2 }), 1.3)); break;
+    case 'table':
+      g.add(box(1.4, 0.06, 0.8, 0x8b5e3c, 0.77));
+      for (const [x, z] of [[-0.62, -0.32], [0.62, -0.32], [-0.62, 0.32], [0.62, 0.32]]) g.add(box(0.07, 0.74, 0.07, 0x6e4a2f, 0.37, x, z));
+      break;
+    case 'chair':
+      g.add(box(0.46, 0.06, 0.46, 0x8b5e3c, 0.45), box(0.46, 0.55, 0.05, 0x8b5e3c, 0.75, 0, -0.21));
+      for (const [x, z] of [[-0.19, -0.19], [0.19, -0.19], [-0.19, 0.19], [0.19, 0.19]]) g.add(box(0.05, 0.42, 0.05, 0x6e4a2f, 0.21, x, z));
+      break;
+    case 'bench':
+      for (const z of [-0.12, 0, 0.12]) g.add(box(1.9, 0.05, 0.1, 0x9a6b44, 0.46, 0, z));
+      g.add(box(1.9, 0.35, 0.05, 0x9a6b44, 0.72, 0, -0.2), box(0.08, 0.44, 0.4, 0x4a4a4a, 0.22, -0.85), box(0.08, 0.44, 0.4, 0x4a4a4a, 0.22, 0.85));
+      break;
+    case 'shelf':
+      g.add(box(1.1, 1.9, 0.08, 0x7a5236, 0.95, 0, -0.18), box(0.06, 1.9, 0.4, 0x7a5236, 0.95, -0.52), box(0.06, 1.9, 0.4, 0x7a5236, 0.95, 0.52));
+      for (const y of [0.3, 0.9, 1.5]) g.add(box(1.0, 0.05, 0.38, 0x8b5e3c, y));
+      for (const [x, y] of [[-0.25, 0.42], [0.15, 1.02], [0.3, 0.42]]) g.add(box(0.18, 0.2, 0.18, 0xb9a88a, y + 0.05, x));
+      break;
+    case 'suitcase': g.add(box(0.62, 0.42, 0.24, 0x7b4a2d), box(0.2, 0.05, 0.05, 0x3b2a1e, 0.47)); break;
+    case 'signboard': {
+      const board = box(1.2, 0.46, 0.06, 0x23463a, 1.55), face = new THREE.MeshStandardMaterial({ map: signTexture(item.label || '站牌') });
+      board.material = [mat(0x23463a), mat(0x23463a), mat(0x23463a), mat(0x23463a), face, mat(0x23463a)];
+      g.add(box(0.08, 1.7, 0.08, 0x4a3b2e, 0.85), board); break;
+    }
+    case 'lamp': {
+      const glow = new THREE.MeshStandardMaterial({ color: 0xfff1c9, emissive: 0xffc861, emissiveIntensity: 0.9, transparent: true, opacity: 0.9 });
+      if (raised) {  // 桌上的煤油灯
+        const base = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.15, 0.2, 32), mat(0x6b5a45, 0.5, 0.6)); base.position.y = 0.1; base.castShadow = true;
+        const glass = new THREE.Mesh(new THREE.SphereGeometry(0.13, 32, 16), glow); glass.position.y = 0.34;
+        const light = new THREE.PointLight(0xffc861, 1.6, 3); light.position.y = 0.36;
+        g.add(base, glass, light);
+      } else {  // 落地的路灯或立灯
+        const metal = mat(0x3b3b3b, 0.6, 0.5);
+        const lantern = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.38, 0.3), glow); lantern.position.y = 2.45;
+        const cap = new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.2, 4), metal); cap.position.y = 2.74; cap.rotation.y = Math.PI / 4; cap.castShadow = true;
+        const light = new THREE.PointLight(0xffc861, 3, 4); light.position.y = 2.4;
+        g.add(box(0.1, 2.3, 0.1, metal, 1.15), box(0.3, 0.08, 0.3, metal, 0.04), lantern, cap, light);
+      }
+      break;
+    }
+    case 'display_stand':
+      if (raised) {  // 调查台上的小相框
+        const holder = photoHolder(item, 0.5); holder.position.y = 0.36; holder.rotation.x = -0.12;
+        g.add(holder, box(0.05, 0.3, 0.05, 0x6e4a2f, 0.15, 0, -0.14));
+      } else {
+        const holder = photoHolder(item, 0.8); holder.position.y = 1.42;
+        g.add(box(0.72, 0.9, 0.72, 0xd8ccb6, 0.45), holder);
+      }
+      break;
+    default: {  // artifact：名字像建筑的画成小模型，其余画成一只器物；放在地上时先垫一个展台
+      const base = raised ? 0 : 0.5, name = item.label || '';
+      if (!raised) g.add(box(0.5, 0.5, 0.5, 0xd8ccb6, 0.25));
+      if (/[楼塔亭阁殿堂门]/.test(name)) {
+        const dome = new THREE.Mesh(new THREE.SphereGeometry(0.14, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), mat(0x5b6b5a, 0.6, 0.3));
+        dome.position.y = base + 0.52; dome.castShadow = true;
+        g.add(box(0.24, 0.52, 0.24, mat(0xcfc3ae, 0.9), base + 0.26), dome);
+        if (name.includes('钟')) { const face = new THREE.Mesh(new THREE.CircleGeometry(0.07, 24), mat(0xf4ecd8, 0.5)); face.position.set(0, base + 0.4, 0.121); g.add(face); }
+      } else {
+        const outline = [[0, 0], [0.12, 0], [0.16, 0.08], [0.18, 0.2], [0.12, 0.32], [0.08, 0.38], [0.1, 0.44]].map(([x, y]) => new THREE.Vector2(x, y));
+        const vase = new THREE.Mesh(new THREE.LatheGeometry(outline, 32), new THREE.MeshStandardMaterial({ color: 0x9c7a3c, roughness: 0.4, metalness: 0.3, side: THREE.DoubleSide }));
+        vase.position.y = base; vase.castShadow = true; g.add(vase);
+      }
+    }
+  }
+  return g;
+}
+function decorate(group, item) {
+  const s = group.scale.y, raised = item.position[1] > 0.05, color = evidence(item)[2];
+  if (!['floor', 'wall'].includes(item.kind)) {
+    const disc = new THREE.Mesh(new THREE.CircleGeometry(raised ? 0.3 : item.kind === 'bench' ? 1.05 : 0.6, 40),
+      new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.32, depthWrite: false }));
+    disc.rotation.x = -Math.PI / 2; disc.position.y = raised ? 0.006 : (0.012 - group.position.y) / s;
+    group.add(disc);
+  }
+  if (!item.hotspot) return;
+  const top = (new THREE.Box3().setFromObject(group).max.y - group.position.y) / s;
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.15, 0.035, 12, 32), new THREE.MeshBasicMaterial({ color }));
+  ring.position.y = top + 0.3; ring.userData = { item, base: ring.position.y };
+  group.add(ring); markers.push(ring); pickables.push(ring);
+  const tag = el('div', { class: 'tag3d', text: item.label || item.kind });
+  $('labels').append(tag); tags.push({ tag, group, height: top + 0.55 });
+}
+function buildScene(spec) {
+  const stage = $('stage');
+  stage.hidden = false; $('sceneList').hidden = true;
+  if (!renderer) {
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+    controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true; controls.maxPolarAngle = Math.PI * 0.47; controls.minDistance = 3; controls.maxDistance = 13;
+    renderer.domElement.addEventListener('pointerdown', (e) => { pressed = [e.clientX, e.clientY]; intro = null; });
+    renderer.domElement.addEventListener('pointerup', pick);
+    window.addEventListener('resize', resize);
+    renderer.setAnimationLoop(frame);
+  }
+  if (!stage.contains(renderer.domElement)) stage.prepend(renderer.domElement);
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xf1eadc); scene.fog = new THREE.Fog(0xf1eadc, 11, 22);
+  scene.add(new THREE.HemisphereLight(0xfff8ec, 0xb8a588, 0.9));
+  const sun = new THREE.DirectionalLight(0xffffff, 1.6);
+  sun.position.set(4, 8, 5); sun.castShadow = true; sun.shadow.mapSize.set(1024, 1024); sun.shadow.radius = 3;
+  Object.assign(sun.shadow.camera, { left: -6, right: 6, top: 6, bottom: -6 }); scene.add(sun);
+  const ground = new THREE.Mesh(new THREE.CircleGeometry(9, 64), new THREE.MeshStandardMaterial({ color: 0xe9dfcc, roughness: 1 }));
+  ground.rotation.x = -Math.PI / 2; ground.position.y = -0.02; ground.receiveShadow = true; scene.add(ground);
+  pickables = []; markers = []; tags = []; $('labels').replaceChildren();
+  for (const item of spec.objects) {
+    const group = makeKind(item, spec.preset);
+    group.position.set(...item.position);
+    group.rotation.y = THREE.MathUtils.degToRad(item.rotationY || 0);
+    group.scale.setScalar(item.scale || 1);
+    if (item.kind !== 'floor') group.traverse((m) => { if (m.isMesh) { m.userData.item = item; pickables.push(m); } });
+    scene.add(group);
+    decorate(group, item);
+  }
+  // 从正前方略偏右看核心展台；后端保证核心展台前面这条视线上不放高物件。
+  camera.position.set(4, 7.5, 13); controls.target.set(0, 0.8, -0.3);
+  intro = { from: camera.position.clone(), to: new THREE.Vector3(1.6, 3.3, 6.2), start: performance.now() };
+  $('popup').hidden = true;
+  resize();
+}
+function frame(time) {
+  if (!scene || $('report').hidden) return;
+  if (intro) {
+    const t = Math.min(1, (performance.now() - intro.start) / 1400), k = 1 - Math.pow(1 - t, 3);
+    camera.position.lerpVectors(intro.from, intro.to, k);
+    if (t >= 1) intro = null;
+  }
+  for (const ring of markers) { ring.position.y = ring.userData.base + Math.sin(time / 420) * 0.05; ring.rotation.y = time / 900; }
+  controls.update();
+  renderer.render(scene, camera);
+  const width = renderer.domElement.clientWidth, height = renderer.domElement.clientHeight;
+  for (const { tag, group, height: h } of tags) {
+    const point = new THREE.Vector3(0, h, 0).applyMatrix4(group.matrixWorld).project(camera);
+    tag.hidden = point.z > 1;
+    tag.style.left = `${(point.x * 0.5 + 0.5) * width}px`; tag.style.top = `${(-point.y * 0.5 + 0.5) * height}px`;
+  }
+}
+function resize() {
+  if (!renderer || $('report').hidden) return;
+  const width = $('stage').clientWidth, height = Math.max(300, Math.min(560, Math.round(width * 0.6)));
+  renderer.setSize(width, height); camera.aspect = width / height; camera.updateProjectionMatrix();
+}
+function pick(event) {
+  if (!pressed || Math.hypot(event.clientX - pressed[0], event.clientY - pressed[1]) > 6) return;
+  const rect = renderer.domElement.getBoundingClientRect();
+  const pointer = new THREE.Vector2(((event.clientX - rect.left) / rect.width) * 2 - 1, -((event.clientY - rect.top) / rect.height) * 2 + 1);
+  const raycaster = new THREE.Raycaster(); raycaster.setFromCamera(pointer, camera);
+  const hit = raycaster.intersectObjects(pickables, false).find((h) => h.object.userData.item && h.object.userData.item.kind !== 'wall');
+  showPopup(hit && hit.object.userData.item, event.clientX - rect.left, event.clientY - rect.top);
+}
+function showPopup(item, x, y) {
+  const popup = $('popup');
+  if (!item) { popup.hidden = true; return; }
+  const [label, color] = evidence(item);
+  const refs = item.evidenceIds.map((id) => sources[id]).filter(Boolean);
+  popup.replaceChildren(el('b', { text: item.label || item.kind }), ' ', el('span', { class: `badge ${color}`, text: label }), el('p', { text: item.note }),
+    refs.length ? el('div', { class: 'refs' }, '依据：', ...refs.map(sourceLink)) : el('p', { class: 'fine', text: '这一项没有来源，只是为了让现场完整，不作为历史证据。' }));
+  const stage = $('stage');
+  popup.style.left = `${Math.max(8, Math.min(x + 12, stage.clientWidth - 272))}px`;
+  popup.style.top = `${Math.max(8, Math.min(y + 12, stage.clientHeight - 170))}px`;
+  popup.hidden = false;
+}
+function fallbackList(spec, error) {
+  $('stage').hidden = true; $('sceneList').hidden = false;
+  $('sceneList').replaceChildren(el('p', { text: `这台设备没法显示 3D（${error.message}），下面是现场清单：` }), sceneItems(spec));
+}
+
+// ---------- 入口：分享链接直接看报告，否则回首页 ----------
+function route() {
+  const shared = location.pathname.match(/^\/c\/([A-Za-z0-9_-]{8,32})$/);
+  if (!shared) { show('home'); return; }
+  fetch(`/api/cases/${shared[1]}`).then((r) => (r.ok ? r.json() : Promise.reject(new Error('没有找到这份调查记录，链接可能不完整。'))))
+    .then((data) => render(data, false))
+    .catch((error) => { history.replaceState(null, '', '/'); show('home'); alert(error.message); });
+}
+window.addEventListener('popstate', () => { running?.abort(); route(); });
+route();
+</script>
+</body>
+</html>
